@@ -10,10 +10,5 @@ public class Accessory extends Item{
 		this.benefit = benefit;
 	}
 	
-
-	
-	public String getBenefit(){
-		return benefit;
-	}
 	
 }
