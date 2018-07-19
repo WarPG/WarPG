@@ -12,4 +12,8 @@ public class Accessory extends Item{
 	
 
 	
+	public String getBenefit(){
+		return benefit;
+	}
+	
 }
