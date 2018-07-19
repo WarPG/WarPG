@@ -5,5 +5,6 @@ public class Mob {
 	private int defence;
 	private int attack;
 	private int dexterity;
+	private int strength;
 	
 }
