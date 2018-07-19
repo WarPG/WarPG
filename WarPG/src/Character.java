@@ -2,6 +2,25 @@ import java.sql.*;
 
 public class Character {
 
+	private String name;
+	private int dexterity;
+	private int experience;
+	private int health;
+	private int defence;
+	private int hitPoints;
+	private int gold;
+	private int charisma;
+	private int attack;
+	private int strength;
+	private int luck;
+	
+	
+	
+	
+	
+	
+	
+	/*
     public static void main(String [] args){
         try {
             Class.forName("org.postgresql.Driver");
@@ -17,4 +36,7 @@ public class Character {
             e.printStackTrace();
         }
     }
+    
+    
+    */
 }
