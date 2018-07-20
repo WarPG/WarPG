@@ -1,17 +1,22 @@
+import java.io.Reader;
+import java.net.*;
 import java.sql.*;
 
 public class Character {
-	
+
+    private int id;
 	private int dexterity;
 	private int experience;
 	private int health;
-	private int defence;
+	private int defense;
 	private int hitPoints;
 	private int gold;
 	private int charisma;
 	private int attack;
 	private int strength;
 	private int luck;
+	private int ms;
+	private String cClass;
 	private String name;
 	
 	
@@ -39,11 +44,11 @@ public class Character {
 	public void setHealth(int health) {
 		this.health = health;
 	}
-	public int getDefence() {
-		return defence;
+	public int getDefense() {
+		return defense;
 	}
-	public void setDefence(int defence) {
-		this.defence = defence;
+	public void setDefense(int defense) {
+		this.defense = defense;
 	}
 	public int getHitPoints() {
 		return hitPoints;
@@ -81,18 +86,63 @@ public class Character {
 	public void setLuck(int luck) {
 		this.luck = luck;
 	}
+	public  String getcClass(){return cClass;}
+    public void setcClass(String cClass){this.cClass=cClass;}
+	public int getMs(){return ms;}
+	public void setMs(int ms){this.ms=ms;}
+    public int getId() {return id;}
+    public void setId(int id) { this.id = id; }
 
+	public Character(int hero_id, Reader name, int dexterity, int experience, int  health, int  defense, int hit_points ,
+                     int  gold , int  charisma , int  attack , int  strength , int  luck , Reader cClass , int  ms){
+	    this.id=hero_id;
+	    this.name=name.toString();
+	    this.dexterity=dexterity;
+	    this.experience=experience;
+	    this.health=health;
+	    this.defense=defense;
+	    this.hitPoints=hit_points;
+	    this.gold=gold;
+	    this.charisma=charisma;
+	    this.attack=attack;
+	    this.strength=strength;
+	    this.luck=luck;
+	    this.cClass=cClass.toString();
+	    this.ms=ms;
+    }
 	
 	
-	
-	
-	
-	
+	public Character getCharacter(int id){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = getConnection();
+            PreparedStatement stmt = con.prepareStatement("SELECT * FROM hero WHERE hero_id="+id);
+            ResultSet rs = stmt.executeQuery();
+            return new Character(rs.getInt(1),rs.getCharacterStream(2),rs.getInt(3)
+                                ,rs.getInt(4) ,rs.getInt(5) ,rs.getInt(6) ,rs.getInt(7)
+                    ,rs.getInt(8) ,rs.getInt(9) ,rs.getInt(10) ,rs.getInt(11) ,rs.getInt(12)
+                    ,rs.getCharacterStream(13) ,rs.getInt(14));
+
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static Connection getConnection() throws SQLException {
+        String dbUrl = System.getenv("JDBC_DATABASE_URL");
+        return DriverManager.getConnection(dbUrl);
+    }
+
+
 	/*
     public static void main(String [] args){
         try {
+
             Class.forName("org.postgresql.Driver");
-        Connection con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/warpg","postgres","ridahab");
+        Connection con = DriverManager.getConnection("postgres://ylvpctvunmtdxy:3bd1b5b109dbc9bb61e8eb4e8daaf4add1d6b94f453298578315ade51a57614e@ec2-54-217-235-166.eu-west-1.compute.amazonaws.com:5432/dej96gpmnq6f0e","postgres","ridahab");
         PreparedStatement stmt = con.prepareStatement("SELECT * FROM Character");
             ResultSet Rs = stmt.executeQuery();
             while(true){
