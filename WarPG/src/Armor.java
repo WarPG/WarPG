@@ -2,7 +2,7 @@ public class Armor extends Item{
 	
 	private int defence;
 
-	public int getDefence() {
+	public int getDefence() { 
 		return defence;
 	} 
 
