@@ -19,7 +19,9 @@ public class Character {
 	private String cClass;
 	private String name;
 	
-	
+	public Character(){
+		
+	}
 	public String getName() {
 		return name;
 	}

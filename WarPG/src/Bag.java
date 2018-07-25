@@ -1,7 +1,8 @@
 public class Bag extends Item{
 	
 	private int capacity;
-
+	
+	
 	public int getCapacity() {
 		return capacity;
 	}
