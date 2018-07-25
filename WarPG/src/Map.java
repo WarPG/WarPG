@@ -1,32 +1,50 @@
-
 import java.util.Random;
 
 public class Map {
 
-    private int map[][] = new int[52][52];
+    private static int map[][] = new int[52][52];
     final int MOB_COUNT = 40;
     final int ITEM_COUNT = 20;
 
 
     Random rand = new Random();
 
-    public void init(){
+    public Map(){
+        init();
+    }
+
+    public static int get(int x, int y){
+        if ((x > 0) && (x < 51) && (y > 0) && (y < 51))
+            return map[x][y];
+        else
+            return -100;
+    }
+
+    public static void printMAP(){
+        for (int i = 0; i < 52; i++)
+            for (int j = 0; j < 52; j++)
+                System.out.println(map[i][j]);
+    }
+    private void init(){
 
         int  pass = rand.nextInt(1);
+        for (int i = 0; i < 52; i++)
+            for (int j = 0; j < 52; j++)
+                map[i][j] = 0;
 
         if (pass == 0){
             for (int i = 0; i < 52; i++){
                 map[i][0] = -1;
-                map[i][52] = -1;
+                map[i][51] = -1;
                 map[0][i] = -2;
-                map[52][i] = -2;
+                map[51][i] = -2;
             }
         }else{
             for (int i = 0; i < 52; i++){
                 map[0][i] = -1;
-                map[52][i] = -1;
+                map[51][i] = -1;
                 map[i][0] = -2;
-                map[i][52] = -2;
+                map[i][51] = -2;
             }
         }
 
@@ -107,6 +125,17 @@ public class Map {
                 map[x][y] = 10;
             }
 
+        }
+    }
+
+    public static void combatOver(int x, int y){
+        if (get(x,y) != 1)
+            return;
+        else {
+            for (int i = 0; i < 52; i++)
+                for (int j = 0; j < 52; j++)
+                    if(get(i,j) == get(x,y))
+                        map[i][j] = 0;
         }
     }
 

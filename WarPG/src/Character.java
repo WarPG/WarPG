@@ -1,11 +1,17 @@
 import java.io.Reader;
-import java.net.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Objects;
 
 public class Character {
 
-    private int id;
-    private Bag b;
+    private Connect c = new Connect();
+    private Bag bg;
+    private String id;
+    private String password;
+    private int hero_id;
 	private int dexterity;
 	private int experience;
 	private int health;
@@ -16,23 +22,10 @@ public class Character {
 	private int attack;
 	private int strength;
 	private int luck;
-	private int ms;
-	private String cClass;
 	private String name;
-	
-	public Character(){
-		b = new Bag();
-	}
-	
-	public Bag getB() {
-		return b;
-	}
-	public void setB(Bag b) {
-		this.b = b;
-	}
-	public String getName() {
-		return name;
-	}
+
+    public static void main(String[] args) {
+    }
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -96,16 +89,43 @@ public class Character {
 	public void setLuck(int luck) {
 		this.luck = luck;
 	}
-	public  String getcClass(){return cClass;}
-    public void setcClass(String cClass){this.cClass=cClass;}
-	public int getMs(){return ms;}
-	public void setMs(int ms){this.ms=ms;}
-    public int getId() {return id;}
-    public void setId(int id) { this.id = id; }
 
-	public Character(int hero_id, Reader name, int dexterity, int experience, int  health, int  defense, int hit_points ,
-                     int  gold , int  charisma , int  attack , int  strength , int  luck , Reader cClass , int  ms){
-	    this.id=hero_id;
+    public int getHero_id() {
+        return hero_id;
+    }
+
+    public void setHero_id(int hero_id) {
+        this.hero_id = hero_id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public Bag getBag(){
+    	return bg;
+    }
+
+    public Character(Reader id, Reader password, int hero_id, Reader name, int dexterity, int experience, int health, int defense, int hit_points,
+                     int  gold , int  charisma , int  attack , int  strength , int  luck ){
+        this.id = id.toString();
+        this.password = password.toString();
+        this.hero_id = hero_id;
 	    this.name=name.toString();
 	    this.dexterity=dexterity;
 	    this.experience=experience;
@@ -117,54 +137,86 @@ public class Character {
 	    this.attack=attack;
 	    this.strength=strength;
 	    this.luck=luck;
-	    this.cClass=cClass.toString();
-	    this.ms=ms;
     }
-	
-	
-	public Character getCharacter(int id){
+
+    public Character() {
+        this.id = "JaneDoe";
+        this.password = "1234";
+        this.hero_id = 999999;
+        this.name = "Jane Doe";
+        this.dexterity = 10;
+        this.experience = 0;
+        this.health = 50;
+        this.defense = 10;
+        this.hitPoints = 10;
+        this.gold = 0;
+        this.charisma = 10;
+        this.attack = 10;
+        this.strength = 10;
+        this.luck = 10;
+    }
+
+    public static Character getCharacter(String id, String password) {
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = getConnection();
-            PreparedStatement stmt = con.prepareStatement("SELECT * FROM hero WHERE hero_id="+id);
+            Connection con = Connect.getConnection();
+            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("SELECT * FROM hero WHERE id=" + id + " AND password=" + password);
             ResultSet rs = stmt.executeQuery();
-            return new Character(rs.getInt(1),rs.getCharacterStream(2),rs.getInt(3)
-                                ,rs.getInt(4) ,rs.getInt(5) ,rs.getInt(6) ,rs.getInt(7)
-                    ,rs.getInt(8) ,rs.getInt(9) ,rs.getInt(10) ,rs.getInt(11) ,rs.getInt(12)
-                    ,rs.getCharacterStream(13) ,rs.getInt(14));
+            Character chr = new Character(
+                    rs.getCharacterStream("id"),
+                    rs.getCharacterStream("password"),
+                    rs.getInt("hero_id"),
+                    rs.getCharacterStream("name"),
+                    rs.getInt("dexterity"),
+                    rs.getInt("experience"),
+                    rs.getInt("health"),
+                    rs.getInt("defense"),
+                    rs.getInt("hit_points"),
+                    rs.getInt("gold"),
+                    rs.getInt("charisma"),
+                    rs.getInt("attack"),
+                    rs.getInt("strength"),
+                    rs.getInt("luck")
+            );
+            con.close();
+            return chr;
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    private static Connection getConnection() throws SQLException {
-        String dbUrl = System.getenv("JDBC_DATABASE_URL");
-        return DriverManager.getConnection(dbUrl);
-    }
-
-
-	/*
-    public static void main(String [] args){
+    public static Character newCharacter(String id, String password,String name){
         try {
-
             Class.forName("org.postgresql.Driver");
-        Connection con = DriverManager.getConnection("postgres://ylvpctvunmtdxy:3bd1b5b109dbc9bb61e8eb4e8daaf4add1d6b94f453298578315ade51a57614e@ec2-54-217-235-166.eu-west-1.compute.amazonaws.com:5432/dej96gpmnq6f0e","postgres","ridahab");
-        PreparedStatement stmt = con.prepareStatement("SELECT * FROM Character");
-            ResultSet Rs = stmt.executeQuery();
-            while(true){
-                System.out.println("lol");
-            }
-    } catch (ClassNotFoundException e) {
-        e.printStackTrace();
-    } catch (SQLException e) {
+            Connection con = Connect.getConnection();
+            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("INSERT INTO hero VALUES (id,password,nextval('hero_id'),name,1,0,1,1,1,0,1,1,1,1)");
+            stmt.executeQuery();
+            PreparedStatement stmt2 = con.prepareStatement("SELECT * FROM hero WHERE id=" + id + " AND password=" + password);
+            ResultSet rs = stmt2.executeQuery();
+            Character chr = new Character(
+                    rs.getCharacterStream("id"),
+                    rs.getCharacterStream("password"),
+                    rs.getInt("hero_id"),
+                    rs.getCharacterStream("name"),
+                    rs.getInt("dexterity"),
+                    rs.getInt("experience"),
+                    rs.getInt("health"),
+                    rs.getInt("defense"),
+                    rs.getInt("hit_points"),
+                    rs.getInt("gold"),
+                    rs.getInt("charisma"),
+                    rs.getInt("attack"),
+                    rs.getInt("strength"),
+                    rs.getInt("luck")
+            );
+            con.close();
+            return chr;
+
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
-    
-    
-    */
 }

@@ -1,3 +1,9 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Random;
+
 public class Mob {
 	
 	private String name;
@@ -43,5 +49,27 @@ public class Mob {
 	public void setStrength(int strength) {
 		this.strength = strength;
 	}
-	
+
+    Connect c = new Connect();
+
+    public Mob(int level, int x, int y){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = Connect.getConnection();
+            PreparedStatement stmt = con.prepareStatement("SELECT column FROM mob ORDER BY RANDOM() LIMIT 1 ");
+            ResultSet rs = stmt.executeQuery();
+            Random r = new Random();
+            name = rs.getCharacterStream("name").toString();
+            health = 1000 + level*(rs.getInt("health"));
+            defence = 100 + level*(rs.getInt("defense"));
+            attack = 100 + level*(rs.getInt("attack"));
+            dexterity = 100 + level*(rs.getInt("dexterity"));
+            strength = 100 + level*(rs.getInt("strength"));
+            con.close();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

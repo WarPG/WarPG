@@ -139,14 +139,7 @@ public class UserInterface {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				ch.getB().getItems().add(new Item(15, 1, 0, 1, ""));
-				ch.getB().getItems().add(new Item(15, 5, 0, 2, ""));
-				ch.getB().getItems().add(new Item(15, 5, 0, 3, ""));
-				ch.getB().getItems().add(new Item(15, 5, 0, 4, ""));
-				ch.getB().getItems().add(new Item(15, 4, 0, 5, ""));
-				ch.getB().getItems().add(new Item(15, 4, 0, 6, ""));
-				ch.getB().getItems().add(new Item(15, 4, 0, 7, ""));
-				ch.getB().getItems().add(new Item(15, 1, 0, 8, ""));
+			
 		
 				
 			}
@@ -195,7 +188,7 @@ public class UserInterface {
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String msg = "";
-				for(Item i : ch.getB().getItems())
+				for(Item i : ch.getBag().getItems())
 				{
 					msg = msg + i + "\n";
 				}
@@ -306,18 +299,27 @@ public class UserInterface {
 		JButton btnNewButton = new JButton("Login");
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//Assuming that user entered correctly..
-				lblNewLabel_2.setText("Login Success!");
 				
-				login.setVisible(false);
+				
 				id = textField.getText();
 				pass = passwordField.getPassword();
-				ch = auth(id,pass);
-				lblNewLabel_4.setText("" + ch.getGold());
-				lblNewLabel_3.setText("0");
-				lblY.setText("0");
-				login.dispose();
-				frame.setVisible(true);
+				ch = Character.getCharacter(id, pass.toString());
+				
+				if(ch!=null)
+				{
+					//Assuming that user entered correctly..
+					lblNewLabel_2.setText("Login Success!");
+					login.setVisible(false);
+					lblNewLabel_4.setText("" + ch.getGold());
+					lblNewLabel_3.setText("0");
+					lblY.setText("0");
+					login.dispose();
+					frame.setVisible(true);
+				}else{
+					lblNewLabel_2.setText("Fail!");
+					return;
+				}
+				
 			}
 		});
 		btnNewButton.setBounds(153, 139, 89, 23);
@@ -355,7 +357,5 @@ public class UserInterface {
 		
 	}
 	
-	public Character auth(String id, char[] pass){
-		return new Character();
-	}
+
 }
