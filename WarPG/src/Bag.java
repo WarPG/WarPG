@@ -10,6 +10,10 @@ public class Bag{
 	}
 	
 	
+	public ArrayList<Item> getItems() {
+		return items;
+	}
+	
 	public int getCapacity() {
 		return capacity;
 	}

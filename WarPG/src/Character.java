@@ -5,6 +5,7 @@ import java.sql.*;
 public class Character {
 
     private int id;
+    private Bag b;
 	private int dexterity;
 	private int experience;
 	private int health;
@@ -20,7 +21,14 @@ public class Character {
 	private String name;
 	
 	public Character(){
-		
+		b = new Bag();
+	}
+	
+	public Bag getB() {
+		return b;
+	}
+	public void setB(Bag b) {
+		this.b = b;
 	}
 	public String getName() {
 		return name;

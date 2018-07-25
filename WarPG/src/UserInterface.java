@@ -139,6 +139,14 @@ public class UserInterface {
 		btnNewButton_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
+				ch.getB().getItems().add(new Item(15, 1, 0, 1, ""));
+				ch.getB().getItems().add(new Item(15, 5, 0, 2, ""));
+				ch.getB().getItems().add(new Item(15, 5, 0, 3, ""));
+				ch.getB().getItems().add(new Item(15, 5, 0, 4, ""));
+				ch.getB().getItems().add(new Item(15, 4, 0, 5, ""));
+				ch.getB().getItems().add(new Item(15, 4, 0, 6, ""));
+				ch.getB().getItems().add(new Item(15, 4, 0, 7, ""));
+				ch.getB().getItems().add(new Item(15, 1, 0, 8, ""));
 		
 				
 			}
@@ -186,14 +194,12 @@ public class UserInterface {
 		JButton btnInventory = new JButton("BAG\r\n");
 		btnInventory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(frame,
-					    "Bag consists of:\n" +
-					    "A\n" +
-					    "B\n" + 
-					    "C\n" + 
-					    "D\n" + 
-					    "E\n",
-					    "Bag",
+				String msg = "";
+				for(Item i : ch.getB().getItems())
+				{
+					msg = msg + i + "\n";
+				}
+				JOptionPane.showMessageDialog(frame, msg, "Bag",
 					    JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
