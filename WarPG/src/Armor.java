@@ -4,7 +4,7 @@ public class Armor extends Item{
 
 	public int getDefence() {
 		return defence;
-	}
+	} 
 
 	public void setDefence(int defence) {
 		this.defence = defence;
