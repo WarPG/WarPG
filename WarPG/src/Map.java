@@ -4,7 +4,7 @@ public class Map {
 
     private static int map[][] = new int[52][52];
     final int MOB_COUNT = 40;
-    final int ITEM_COUNT = 20;
+    final int ITEM_COUNT = 150;
 
 
     Random rand = new Random();

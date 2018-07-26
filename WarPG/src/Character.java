@@ -1,8 +1,8 @@
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class Character {
@@ -11,7 +11,6 @@ public class Character {
     private Bag bg;
     private String id;
     private String password;
-    private int hero_id;
 	private int dexterity;
 	private int experience;
 	private int health;
@@ -24,8 +23,6 @@ public class Character {
 	private int luck;
 	private String name;
 
-    public static void main(String[] args) {
-    }
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -90,13 +87,9 @@ public class Character {
 		this.luck = luck;
 	}
 
-    public int getHero_id() {
-        return hero_id;
-    }
-
-    public void setHero_id(int hero_id) {
-        this.hero_id = hero_id;
-    }
+	public Bag getBag(){
+		return bg;
+	}
 
     public String getName() {
         return name;
@@ -117,16 +110,13 @@ public class Character {
     public void setPassword(String password) {
         this.password = password;
     }
-    public Bag getBag(){
-    	return bg;
-    }
 
-    public Character(Reader id, Reader password, int hero_id, Reader name, int dexterity, int experience, int health, int defense, int hit_points,
+
+    public Character(String id, String password, String name, int dexterity, int experience, int health, int defense, int hit_points,
                      int  gold , int  charisma , int  attack , int  strength , int  luck ){
-        this.id = id.toString();
-        this.password = password.toString();
-        this.hero_id = hero_id;
-	    this.name=name.toString();
+        this.id = id;
+        this.password = password;
+        this.name = name;
 	    this.dexterity=dexterity;
 	    this.experience=experience;
 	    this.health=health;
@@ -137,12 +127,12 @@ public class Character {
 	    this.attack=attack;
 	    this.strength=strength;
 	    this.luck=luck;
+	    bg = new Bag();
     }
 
     public Character() {
         this.id = "JaneDoe";
         this.password = "1234";
-        this.hero_id = 999999;
         this.name = "Jane Doe";
         this.dexterity = 10;
         this.experience = 0;
@@ -160,13 +150,13 @@ public class Character {
         try {
             Class.forName("org.postgresql.Driver");
             Connection con = Connect.getConnection();
-            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("SELECT * FROM hero WHERE id=" + id + " AND password=" + password);
+            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("SELECT * FROM hero WHERE id=\'" + id + "\' AND password=\'" + password + "\'");
             ResultSet rs = stmt.executeQuery();
+            rs.next();
             Character chr = new Character(
-                    rs.getCharacterStream("id"),
-                    rs.getCharacterStream("password"),
-                    rs.getInt("hero_id"),
-                    rs.getCharacterStream("name"),
+                    rs.getString("id"),
+                    rs.getString("password"),
+                    rs.getString("name"),
                     rs.getInt("dexterity"),
                     rs.getInt("experience"),
                     rs.getInt("health"),
@@ -178,6 +168,44 @@ public class Character {
                     rs.getInt("strength"),
                     rs.getInt("luck")
             );
+            rs.close();
+            con.close();
+            
+            return chr;
+
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Character newCharacter(String id, String password, String name){
+        try {
+            Class.forName("org.postgresql.Driver");
+            Connection con = Connect.getConnection();
+            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("INSERT INTO hero (id,password,name,dexterity,experience,health,defense,hit_points,gold,charisma,attack,strength,luck)VALUES (\'" + id + "\',\'" + password + "\',\'" + name + "\',10,10,10,10,10,10,10,10,10,10)");
+            stmt.execute();
+            PreparedStatement stmt3 = Objects.requireNonNull(con).prepareStatement("INSERT INTO bag VALUES (NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,id,NULL)");
+            stmt3.execute();
+            PreparedStatement stmt2 = con.prepareStatement("SELECT * FROM hero WHERE id=\'" + id + "\' AND password=\'" + password + "\'");
+            ResultSet rs = stmt2.executeQuery();
+            rs.next();
+            Character chr = new Character(
+                    rs.getString("id"),
+                    rs.getString("password"),
+                    rs.getString("name"),
+                    rs.getInt("dexterity"),
+                    rs.getInt("experience"),
+                    rs.getInt("health"),
+                    rs.getInt("defense"),
+                    rs.getInt("hit_points"),
+                    rs.getInt("gold"),
+                    rs.getInt("charisma"),
+                    rs.getInt("attack"),
+                    rs.getInt("strength"),
+                    rs.getInt("luck")
+            );
+            rs.close();
             con.close();
             return chr;
 
@@ -187,36 +215,71 @@ public class Character {
         return null;
     }
 
-    public static Character newCharacter(String id, String password,String name){
+    public static void updateCharacter(Character character) {
         try {
             Class.forName("org.postgresql.Driver");
-            Connection con = Connect.getConnection();
-            PreparedStatement stmt = Objects.requireNonNull(con).prepareStatement("INSERT INTO hero VALUES (id,password,nextval('hero_id'),name,1,0,1,1,1,0,1,1,1,1)");
-            stmt.executeQuery();
-            PreparedStatement stmt2 = con.prepareStatement("SELECT * FROM hero WHERE id=" + id + " AND password=" + password);
-            ResultSet rs = stmt2.executeQuery();
-            Character chr = new Character(
-                    rs.getCharacterStream("id"),
-                    rs.getCharacterStream("password"),
-                    rs.getInt("hero_id"),
-                    rs.getCharacterStream("name"),
-                    rs.getInt("dexterity"),
-                    rs.getInt("experience"),
-                    rs.getInt("health"),
-                    rs.getInt("defense"),
-                    rs.getInt("hit_points"),
-                    rs.getInt("gold"),
-                    rs.getInt("charisma"),
-                    rs.getInt("attack"),
-                    rs.getInt("strength"),
-                    rs.getInt("luck")
-            );
-            con.close();
-            return chr;
-
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return null;
+        Connection con = Connect.getConnection();
+        PreparedStatement stmt = null;
+        try {
+            stmt = Objects.requireNonNull(con).prepareStatement("UPDATE hero SET dexterity = " + character.dexterity + ",experience=" + character.experience + ",health=" + character.health + ",defense=" + character.defense + ",hit_points=" + character.hitPoints +
+                    ",gold=" + character.gold + ",charisma=" + character.charisma + ",attack=" + character.attack + " ,strength=" + character.strength + " ,luck=" + character.luck + "  WHERE id=\'" + character.id + "\'");
+
+            stmt.execute();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void wearArmor(Armor item) {
+
+        ArrayList<Item> items = this.bg.items;
+
+        items.set(3, item);
+       
+    }
+
+    public void wearWeapon(Weapon item) {
+
+    	ArrayList<Item> items = this.bg.items;
+
+        items.set(4, item);
+
+    }
+        
+    
+
+    public void wearAccessory(Accessory item) {
+
+        ArrayList<Item> items = this.bg.items;
+        int index;
+        if(item.wearType==6){
+        	index = 5;
+        }else{
+        	index = 6;
+        }
+       items.set(index, item);
+
+    }
+        
+    
+    
+
+    public void wearWearable(Wearable item) {
+    	ArrayList<Item> items = this.bg.items;
+
+        int index;
+        if(item.wearType==1){
+        	index = 0;
+        }else if(item.wearType==2){
+        	index = 1;
+        }
+        else{
+        	index = 2;
+        }
+        items.set(index, item);
     }
 }
